@@ -1,0 +1,13 @@
+[
+    {
+        "Type": "STACK",
+        "Filter" : "tCaT-"
+    },
+    {
+        "Type" : "S3_BUCKET",
+        "Filter": "cfn-abi-spotbynetapp-cloudcheckr-"
+
+    }
+
+]
+
