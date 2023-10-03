@@ -29,10 +29,10 @@ Running ABI
 After completing the prerequisites, you can now run ABI to automatically provision your AWS account within the CloudCheckr environment. The template will require the following information:
 - APIKey: The API ID created in the CloudCheckr environment.
 - APISecret: The secret associated with the APIKey.
-- BillingBucketName: Name of the S3 bucket for billing data. (if used in environment, or can be left blank)
-- CloudTrailBucketName: Name of the S3 bucket for CloudTrail logs. (if used in environment, or can be left blank)
+- BillingBucketName: Name of the S3 bucket for billing data. (if used in environment, or can be left blank) (***ensure versioning is enabled on S3 bucket***)
+- CloudTrailBucketName: Name of the S3 bucket for CloudTrail logs. (if used in environment, or can be left blank) (ensure versioning is enabled on S3 bucket***)
 - CurBucketName: Name of the S3 bucket for CUR data. (***For payer account only*** if used in environment, or can be left blank) - CloudCheckr requires a CUR bucket with a specific format, please refer to 
-   https://success.cloudcheckr.com/article/v663i9wzaj-configure-the-cost-and-usage-report-in-aws for detail instructions to setup CloudCheckr specific CUR. 
+   https://success.cloudcheckr.com/article/v663i9wzaj-configure-the-cost-and-usage-report-in-aws for detail instructions to setup CloudCheckr specific CUR.  (***ensure versioning is enabled on S3 bucket***)
    Once the CUR is created in AWS please follow the instructions to configure CUR report in CloudCheckr https://success.cloudcheckr.com/article/emle9kpgbz-configure-the-cost-and-usage-report-in-cloud-checkr
 - CustomerNumber: Found in the URL when logged into CloudCheckr. Example: https://app-us.cloudcheckr.com/customers/1234567 (The number after /customers/  in this case the customer number would be 1234567).
 

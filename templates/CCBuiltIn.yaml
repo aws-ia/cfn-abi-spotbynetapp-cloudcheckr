@@ -5,8 +5,8 @@
 
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Automation of building IAM Role and credentialing against CloudCheckr
-  account
+Description: "Automation of building IAM Role and credentialing against CloudCheckr
+  account. (abi-1kirFQBF75MfEQ3RbMQHRb-6zslZiD89tzGorqVfIMUxZ-ln89tltm)"
 Parameters:
   pAPIKey:
     Type: String

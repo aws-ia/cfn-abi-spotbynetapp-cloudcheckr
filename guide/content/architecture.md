@@ -11,16 +11,16 @@ Deploying this ABI package with default parameters builds the following architec
 As shown in the diagram, the Quick Start sets up the following:
 
 * In all current and AWS accounts in your AWS organization:
-    * <Amazon CloudWatch Events rules> to <detect changes in AWS Config configuration items (CIs)> and <trigger AWS Lambda functions>.
-    * <Service> to perform <Action-1> and <Action-2>.
+    * Amazon CloudWatch Events rules to detect changes in AWS Config configuration items (CIs) and trigger AWS Lambda functions.
+    * IAM Roles to perform various tasks and manage permissions.
 
 * In the management account:
-    * <Service> to perform <Action-1> and <Action-2>.
+    * S3 bucket policy and CloudFormation stacks to manage and deploy resources.
 
 * In the log archive account:
-    * <Service> to perform <Action-1> and <Action-2>.
+    * Lambda functions for creating AWS accounts and credentialing.
 
 * In the security tooling account:
-    * <Service> to perform <Action-1> and <Action-2>.
+    * Custom resources and Lambda functions for managing external IDs and copying objects between S3 buckets.
 
 **Next:** Choose [Deployment Options](/deployment-options/index.html) to get started.
