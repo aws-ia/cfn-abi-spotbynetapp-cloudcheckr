@@ -10,7 +10,7 @@ This ABI package provides various deployment options to cater to different organ
 
 ## Deployment Option 1:
 
-### [Deploy CloudCheckr for AWS Organizations](quick-link)
+### [Deploy CloudCheckr for AWS Organizations]
 
 This option builds a robust, scalable, and secure environment for managing and monitoring your AWS resources and infrastructure.
 

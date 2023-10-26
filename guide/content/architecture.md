@@ -6,12 +6,11 @@ description: Solution architecture.
 
 Deploying this ABI package with default parameters builds the following architecture.
 
-![Architecture diagram](/images/architecture.png)
+![Architecture diagram](/images/CloudCheckr ABI Architecture.pptx)
 
 As shown in the diagram, the ABI for CloudCheckr sets up the following:
 
-* In all current and AWS accounts in your AWS organization:
-    * Amazon CloudWatch Events rules to detect changes in AWS Config configuration items (CIs) and trigger AWS Lambda functions.
+* In current AWS account in your AWS organization:
     * IAM Roles to perform various tasks and manage permissions.
 
 * In the management account:

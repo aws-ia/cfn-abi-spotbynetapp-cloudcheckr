@@ -27,4 +27,6 @@ Before you start, make sure you have completed the following steps:
    - Click +new to generate an access key, provide a name, and select Create.
    - Copy the API secret
 
-Choose Overview to get started.
+Choose [Overview](/overview/index.html) to get started.
+
+
