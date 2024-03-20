@@ -18,14 +18,15 @@ def lambda_handler(event, context):
     try:
         APIKey = event['ResourceProperties']['pAPIKey']
         APISecret = event['ResourceProperties']['pAPISecret']
+        Environment = event['ResourceProperties']['pEnvironment']
         customerNumber = event['ResourceProperties']['pCustomerNumber']
         accountNumber = event['ResourceProperties']['AccountNumber']
         if event['RequestType'] == 'Delete':
             send_response(event, context, 'SUCCESS', {'Message': 'Resource deletion completed'})
         else:
-            bearerToken = get_access_token("https://auth-us.cloudcheckr.com/auth/connect/token", APIKey, APISecret)
+            bearerToken = get_access_token("https://auth-"+Environment+".cloudcheckr.com/auth/connect/token", APIKey, APISecret)
  
-            response = getExternalID(customerNumber, accountNumber, bearerToken) 
+            response = getExternalID(customerNumber, accountNumber, bearerToken, Environment) 
 
 
             response_data = {'externalAccount': response['awsAccountId'], 'ExternalId': response['externalIdValue']}
@@ -71,9 +72,9 @@ def send_response(event, context, response_status, response_data):
     
 
  
-def getExternalID(customerNumber, accountNumber, bearerToken):
+def getExternalID(customerNumber, accountNumber, bearerToken, Environment):
     region = "Commercial"
-    url = "https://api-us.cloudcheckr.com/credential/v1/customers/"+str(customerNumber)+"/accounts/"+str(accountNumber)+"/external-id/aws/"+region
+    url = "https://api-"+Environment+".cloudcheckr.com/credential/v1/customers/"+str(customerNumber)+"/accounts/"+str(accountNumber)+"/external-id/aws/"+region
     headers = {
         'Accept': 'text/plain',
         'Content-Type': 'application/json',

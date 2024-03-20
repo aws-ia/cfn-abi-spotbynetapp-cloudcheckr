@@ -16,6 +16,10 @@ Parameters:
     Type: String
     Description: API Secret
     NoEcho: true
+  pEnvironment:
+    Type: String
+    Description: CloudCheckr Environment(US, EU, AU, GOV)
+    NoEcho: true
   pCustomerNumber:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     Type: String
@@ -210,6 +214,8 @@ Resources:
         Ref: pAPIKey
       pAPISecret:
         Ref: pAPISecret
+      pEnvironment:
+        Ref: pEnvironment
       pCustomerNumber:
         Ref: pCustomerNumber
   rgetExternalIDFunction:
@@ -258,6 +264,8 @@ Resources:
         Ref: pAPIKey
       pAPISecret:
         Ref: pAPISecret
+      pEnvironment:
+        Ref: pEnvironment
       pCustomerNumber:
         Ref: pCustomerNumber
       AccountNumber:
@@ -323,6 +331,8 @@ Resources:
         Ref: pAPIKey
       pAPISecret:
         Ref: pAPISecret
+      pEnvironment:
+        Ref: pEnvironment
       pCustomerNumber:
         Ref: pCustomerNumber
       AccountNumber:

@@ -18,7 +18,9 @@ def lambda_handler(event, context):
     try:
         APIKey = event['ResourceProperties']['pAPIKey']
         APISecret = event['ResourceProperties']['pAPISecret']
+        Environment = event['ResourceProperties']['pEnvironment']
         customerNumber = event['ResourceProperties']['pCustomerNumber']
+
 
         if event['RequestType'] == 'Delete':
             send_response(event, context, 'SUCCESS', {'Message': 'Resource deletion completed'})
@@ -26,10 +28,16 @@ def lambda_handler(event, context):
             account_aliases, account_number = get_account_name()
             accountName = account_aliases[0] if account_aliases else account_number
 
-            bearerToken = get_access_token("https://auth-us.cloudcheckr.com/auth/connect/token", APIKey, APISecret)
+            bearerToken = get_access_token("https://auth-"+Environment+".cloudcheckr.com/auth/connect/token", APIKey, APISecret)
         
-            response = createAccount(customerNumber, accountName, bearerToken)
-
+            response = createAccount(customerNumber, accountName, bearerToken, Environment)
+            if response.get('accountId') is None:
+                sendResponse = send_response(event, context, 'FAILED', {'Error': 'An error occurred during the Lambda execution: ' + response['body']})
+                return {
+                    'statusCode': 500,
+                    'body': 'An error occurred during the Lambda execution: ' + response['body']
+                }
+            
     except Exception as e:
         timer.cancel()
         sendResponse = send_response(event, context, 'FAILED', {'Error': 'An error occurred during the Lambda execution: ' + str(e)})
@@ -67,8 +75,36 @@ def send_response(event, context, response_status, response_data):
     with urllib.request.urlopen(req) as f:
         pass
 
-def createAccount(customer_number, accountName, bearer_token):
-    url = "https://api-us.cloudcheckr.com/customer/v1/customers/" + str(customer_number) + "/account-management/accounts"
+def getPreviousAccountNameID(customer_number, bearer_token, accountName, Environment):
+    #{{baseUrl}}/customer/v1/customers/:customerId/account-management/accounts?search=KurtCheckingTestName
+    url = "https://api-"+Environment+".cloudcheckr.com/customer/v1/customers/" + str(customer_number) + "/account-management/accounts?search=" + str(accountName)
+    headers = {
+        'Accept': 'text/plain',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + bearer_token
+    }
+    response = urllib.request.urlopen(urllib.request.Request(
+        url,
+        headers=headers,
+        method='GET'),
+        timeout=15)
+    
+    response_text = response.read().decode()
+
+    response_json = json.loads(response_text)
+    #Check to see if id exists in response
+    if 'id' in response_json:
+        account_id = response_json.get('id')
+    else:
+        account_id = None
+    
+    if account_id is None:
+        return None
+    else:
+        return account_id
+
+def createAccount(customer_number, accountName, bearer_token, Environment):
+    url = "https://api-"+Environment+".cloudcheckr.com/customer/v1/customers/" + str(customer_number) + "/account-management/accounts"
     payload = json.dumps({
         "item": {
             "name": accountName,
@@ -90,7 +126,24 @@ def createAccount(customer_number, accountName, bearer_token):
     response_text = response.read().decode()
 
     response_json = json.loads(response_text)
-    account_id = response_json.get('id')
+    #Check to see if id exists in response
+    if 'id' in response_json:
+        account_id = response_json.get('id')
+    else:
+        account_id = None
+    
+    if 'message' in response_json == "Name must be unique. One per customer.":
+        account_id = getPreviousAccountNameID(customer_number, bearer_token, accountName, Environment)
+    else:    
+        return {
+            'statusCode': 200,
+            'body': 'completed!',
+            'accountId': account_id,
+            'bearerToken': bearer_token
+        }
+
+    
+    
 
     return {
         'statusCode': 200,

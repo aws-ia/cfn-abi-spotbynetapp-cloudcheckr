@@ -22,14 +22,15 @@ def lambda_handler(event, context):
             resource_properties = event['ResourceProperties']
             APIKey = resource_properties['pAPIKey']
             APISecret = resource_properties['pAPISecret']
+            Environment = event['ResourceProperties']['pEnvironment']
             customerNumber = resource_properties['pCustomerNumber']
             accountNumber = resource_properties['AccountNumber']
             RoleArn = resource_properties['RoleArn']
-            bearerToken = get_access_token("https://auth-us.cloudcheckr.com/auth/connect/token", APIKey, APISecret)
+            bearerToken = get_access_token("https://auth-"+Environment+".cloudcheckr.com/auth/connect/token", APIKey, APISecret)
 
 
 
-            response = credentialAccount(customerNumber, accountNumber, RoleArn, bearerToken)
+            response = credentialAccount(customerNumber, accountNumber, RoleArn, bearerToken, Environment)
 
         
     except Exception as e:
@@ -49,8 +50,8 @@ def timeout(event, context):
     logging.error('Execution is about to time out, sending failure response to CloudFormation')
     send_response(event, context, 'FAILED', {'Error': 'Execution is about to time out'})
 
-def credentialAccount(customerNumber, accountNumber, RoleArn, bearerToken):
-    url = f"https://api-us.cloudcheckr.com/credential/v1/customers/{customerNumber}/accounts/{accountNumber}/credentials/aws"
+def credentialAccount(customerNumber, accountNumber, RoleArn, bearerToken, Environment):
+    url = f"https://api-"+Environment+".cloudcheckr.com/credential/v1/customers/{customerNumber}/accounts/{accountNumber}/credentials/aws"
     
     payload = json.dumps({
         "item": {
