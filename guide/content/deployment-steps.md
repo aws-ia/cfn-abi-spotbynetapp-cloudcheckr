@@ -26,20 +26,25 @@ description: Deployment steps
 
 Wait for the CloudFormation status to change to `CREATE_COMPLETE` state.
 
-## Launch using Customizations for Control Tower or as a Stack Set {#launch-cfct}
+## Launch on AWS Organizations member accounts using AWS CloudFormation Stacksets
+If you're using this solution in an AWS organization that doesn't use AWS Control Tower, you need to create IAM roles to [Set up basic permissions for stack set operations](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html#stacksets-prereqs-accountsetup) so that this ABI solution can be deployed to all member accounts in the AWS Organizations or to specific accounts or OUs you select. 
+    a. You need to create an IAM role (AWSCloudFormationStackSetAdministrationRole) in your management account to establish a trusted relationship between the account you're administering the stack set from and the account you're deploying stack instances to. The CloudFormation template to create this role is [available here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html#stacksets-prereqs-accountsetup).
+    b. You need to create an IAM execution role (AWSCloudFormationStackSetExecutionRole) for AWS CloudFormation to deploy the StackSets across all member accounts with in the organization. You can use [this CloudFormation template](https://s3.amazonaws.com/cloudformation-stackset-sample-templates-us-east-1/AWSCloudFormationStackSetExecutionRole.yml) and deploy the stack acoss the organization using instructions from [Create a stack set with service-managed permissions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-getting-started-create.html#stacksets-orgs-associate-stackset-with-org)
+    c. From your Management Account create your AWS CloudFormation StackSets and chose Self-service permissions and use `AWSCloudFormationStackSetExecutionRole` for the IAM admin role name and  `AWSCloudFormationStackSetExecutionRole` for the IAM execution role name and then you can select the CloudFormation template from `https://github.com/aws-ia/cfn-abi-spotbynetapp-cloudcheckr/blob/main/templates/CCBuiltIn.yaml`.
+    [AWS CloudFormation StackSets Self-service permissions](/images/stack-set-admin.png)
 
-You can use CfCT to deploy the templates provided with the AWS Built-in package.
+
+## Launch using Customizations for Control Tower (CfCT) {#launch-cfct}
+
+Customizations for AWS Control Tower combines AWS Control Tower and other highly available, trusted AWS services to help customers set up a secure, multiaccount AWS environment according to AWS best practices. You can add customizations to your AWS Control Tower landing zone using an AWS CloudFormation template and service control policies (SCPs). You can deploy the custom template and policies to individual accounts and organizational units (OUs) within your organization.
+
+CfCT also integrates with AWS Control Tower lifecycle events to hlep ensure that resource deployments stay in sync with your landing zone. For example, when you create a new account using AWS Control Tower account factory, CfCT deploys all of the resources that are attached to the account.
+
+The templates provided by this ABI package are deployable through CfCT.
 
 ### Prerequisites
 
-The CfCT solution does not launch resources on the management account. Therefore, you must create the role with required permissions in the management account.
-
-Control Tower permissions:
-(/images/control-tower-admin.png)
-
-StackSet permissions:
-
-(/images/stack-set-admin.png)
+The CfCT solution can't launch resources in the management account by default. You need select pCreateAWSControlTowerExecutionRole : true to allow the stack to create the role or must manually create a role in that account that has necessary permissions.
 
 ### How it works
 
