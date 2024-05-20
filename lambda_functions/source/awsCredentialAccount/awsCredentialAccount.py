@@ -5,11 +5,14 @@
 
 import json
 import base64
+import boto3
 import urllib.request
 import urllib.parse
 import threading
 import logging
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     response = None
@@ -35,7 +38,7 @@ def lambda_handler(event, context):
         
     except Exception as e:
         timer.cancel()
-        print("Error: ", e)
+        logger.error(f"Error: {e}")
         sendResponse = send_response(event, context, 'FAILED', {'Error': 'An error occurred during the Lambda execution: ' + str(e)})
         return {
             'statusCode': 500,
@@ -53,10 +56,14 @@ def timeout(event, context):
 
 def credentialAccount(customerNumber, accountNumber, RoleArn, bearerToken, Environment):
     url = f"https://api-"+Environment+".cloudcheckr.com/credential/v1/customers/"+customerNumber+"/accounts/"+accountNumber+"/credentials/aws"   
-    
+    aws_partition = get_aws_partition()
+    if aws_partition == "aws-us-gov":
+        regionGroup = "GovUs"
+    else:
+        regionGroup = "Commercial"
     payload = json.dumps({
         "item": {
-            "regionGroup": "Commercial",
+            "regionGroup": regionGroup,
             "crossAccountRole": {
                 "roleArn": RoleArn
             }
@@ -121,3 +128,9 @@ def get_access_token(url, client_id, client_secret):
     response = urllib.request.urlopen(request)
     response_json = json.loads(response.read().decode())
     return response_json["access_token"]
+
+def get_aws_partition():
+    session = boto3.session.Session()
+    region_name = session.region_name
+    partition = session.get_partition_for_region(region_name)
+    return partition
